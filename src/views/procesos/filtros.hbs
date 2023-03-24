@@ -1,0 +1,487 @@
+<div class="card">
+    <div class="card-body">
+        <div>
+
+
+            <div class="row">
+                {{!-- seleccion de filtro como el select de sede y el insert de documento --}}
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Seleccione un filtro</label>
+                        <select class="form-select select-1" id="ddlFiltro">
+                            <option value="">-- Seleccione un tipo de filtro --</option>
+                            <option value="usuarios">Usuarios</option>
+                            <option value="sede">Sede</option>
+                        </select>
+                        {{!-- boton de descarga del archivo gestion --}}
+
+                    </div>
+
+                    <div class="mb-3" id="des">
+                        <label class='form-label' id="label2">Seleccione una opción</label>
+                        <select class='form-select select-2' id='selectSede'>
+                        </select>
+                        <label class='form-label' id="label3">Ingrese una identificación</label>
+                        <input class="form-control" type='text' name='Ingresa una identificación' id='identificacion'>
+                    </div>
+                </div>
+                {{!-- fecha inicio, fecha final, select corte y boton de filtrar --}}
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12" style="padding:4px 4px 4px 4px;">
+                            <div class="row">
+                                <div class="col-md-6">
+
+                                    <div class="mb-3 cambio_fechas">
+                                        <label class="form-label ">Fecha de inicio</label>
+                                        <input class="form-control " type="date" id="fechainicio" />
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3 fecha_dos">
+                                        <label class="form-label ">Fecha del fin</label>
+                                        <input class="form-control " type="date" id="fechafinal" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="divCorte">
+                            <div class="mb-3" id="laberCorte">
+                                <label class="form-label">Seleccione una cohorte</label>
+
+                                <select class="form-select select-1" id="filtroCohorte">
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"> </label>
+                                <button type="submit" class="btn btn-primary" id="filtro">Filtrar </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="cold-md-12 loading" style="display: flex;">
+            <div class="mb-6" style="display: inline;">
+                <p>Cargando...</p>
+            </div>
+            <div class="spinner-border mb-6 " role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        {{!-- tabla y boton para Imprimir excel --}}
+        <div id="tablas">
+        </div>
+        <div>
+            <div class="row">
+                <div class="col-md-12 mt-2">
+                    <button type="submit" class="btn btn-primary" id="imprimirExcel">Imprimir tabla en excel </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{!--
+_________________________________________________________________________________________________________________________________
+--}}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mini.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer">
+    </script>
+
+
+<script>
+    const selectElement = document.querySelector('#ddlFiltro');
+    const selectSede = document.querySelector('#selectSede');
+    const labelElement2 = document.querySelector('#label2');
+    const btnFiltro = document.querySelector('#filtro');
+    const labelElement3 = document.querySelector('#label3');
+    const inputIdentificacion = document.querySelector('#identificacion');
+    var identi = document.getElementById("identificacionDiv")
+    const labelCorte = document.querySelector('#laberCorte');
+    const filtroCohorte = document.querySelector('#filtroCohorte');
+    const divCorte = document.querySelector('#divCorte');
+    const tabla = document.querySelector('#tablas');
+    const imprimirExcel = document.querySelector('#imprimirExcel');
+    const fechaInicio = document.querySelector('#fechainicio');
+    const fechaFinal = document.querySelector('#fechafinal');
+    const fechas = document.querySelector(".cambio_fechas");
+    const fec = document.querySelector(".fecha_dos");
+    const loading = document.querySelector(".loading");
+    let cohortes = {};
+
+    loading.style.display = 'none';
+    labelElement2.style.display = 'none';
+    selectSede.style.display = 'none';
+    btnFiltro.style.display = 'none';
+    labelElement3.style.display = 'none';
+    inputIdentificacion.style.display = 'none';
+    labelCorte.style.display = 'none';
+    filtroCohorte.style.display = 'none';
+    divCorte.style.display = 'none';
+    tabla.style.display = 'none';
+    imprimirExcel.style.display = 'none';
+    fechas.style.display = 'none';
+    fec.style.display = 'none';
+
+    //para que el rango de la fecha no sea mayor a 1 mes
+    fechaInicio.addEventListener('change', (event) => {
+        dateI = new Date(fechaInicio.value);
+        dateF = new Date(fechaFinal.value);
+        var diferencia = Math.ceil(Math.abs((dateF - dateI) / (1000 * 60 * 60 * 24)));
+        if (diferencia > 31 || dateF < dateI) {
+            alert("El dato ingresado no es valido");
+            document.getElementById("fechainicio").value = "";
+        }
+    });
+
+    fechaFinal.addEventListener('change', (event) => {
+        dateI = new Date(fechaInicio.value);
+        dateF = new Date(fechaFinal.value);
+        var diferencia = Math.ceil(Math.abs((dateF - dateI) / (1000 * 60 * 60 * 24)));
+        if (diferencia > 31 || dateF < dateI) {
+            alert("El dato ingresado no es valido");
+            document.getElementById("fechafinal").value = "";
+        }
+    });
+
+
+
+    //acciones al seleccionar una opcion del filtro
+    selectElement.addEventListener('change', (event) => {
+        //datos del select sedes
+        if (selectElement.value == 'sede') {
+
+            labelElement2.style.display = 'block';
+            selectSede.style.display = 'block';
+            btnFiltro.style.display = 'block';
+            labelCorte.style.display = 'block';
+            filtroCohorte.style.display = 'block';
+            divCorte.style.display = 'block';
+            labelElement3.style.display = 'none';
+            inputIdentificacion.style.display = 'none';
+            fechas.style.display = 'block';
+            fec.style.display = 'block';
+
+
+
+
+
+            fetch("/filtro1")
+                .then(response => response.json())
+                .then(data => {
+
+                    // Aquí puedes trabajar con los datos devueltos
+                    const select = document.querySelector("#selectSede");
+                    const select1 = document.querySelector("#filtroCohorte");
+                    select.innerHTML = "";
+                    select1.innerHTML = "";
+                    const opt = document.createElement("option")
+                    opt.value = "";
+                    opt.text = "-- Seleccione una opción --";
+                    select.appendChild(opt);
+
+                    data.Sedes.forEach(Sedes => {
+                        const option = document.createElement("option");
+                        option.value = Sedes.NombreSede;
+                        option.text = Sedes.NombreSede;
+                        select.appendChild(option);
+                    });
+                    const opt2 = document.createElement("option");
+                    opt2.value = "todas";
+                    opt2.text = "Todas";
+                    select.appendChild(opt2);
+
+
+                    const option1 = document.createElement("option");
+                    option1.value = "";
+                    option1.text = "-- Seleccione una opción --";
+                    select1.appendChild(option1);
+                    data.query_cohorte1.forEach(cohorte => {
+                        const option = document.createElement("option");
+                        option.value = cohorte.codigo;
+                        option.text = cohorte.Nombre;
+                        select1.appendChild(option);
+                    });
+                    const option2 = document.createElement("option");
+                    option2.value = "todas";
+                    option2.text = "Todas";
+                    select1.appendChild(option2);
+                })
+
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+        //aparece y desaparece los campos segun convenga
+        else {
+            if (selectElement.value == 'usuarios') {
+                labelElement2.style.display = 'none';
+                selectSede.style.display = 'none';
+                labelElement3.style.display = 'block';
+                inputIdentificacion.style.display = 'block';
+                labelCorte.style.display = 'none';
+                filtroCohorte.style.display = 'none';
+                divCorte.style.display = 'none';
+                btnFiltro.style.display = 'block';
+                fechas.style.display = 'none';
+                fec.style.display = 'none';
+
+            }
+            else {
+                if (selectElement.value == '') {
+                    labelElement2.style.display = 'none';
+                    selectSede.style.display = 'none';
+                    btnFiltro.style.display = 'none';
+                    labelElement3.style.display = 'none';
+                    inputIdentificacion.style.display = 'none';
+                    labelCorte.style.display = 'none';
+                    filtroCohorte.style.display = 'none';
+                    divCorte.style.display = 'none';
+                    fechas.style.display = 'none';
+                    fec.style.display = 'none';
+
+                }
+            }
+        };
+
+    });
+
+    //acciones cuando le das al boton filtrar
+    btnFiltro.addEventListener("click", function () {
+        loading.style.display = 'block';
+        event.preventDefault();
+        let coho;
+        let sed;
+        let iden;
+
+        //let inicio = new Date(fechaInicio.value);
+        //let Fin = new Date(fechaFinal.value);
+        if (selectElement.value == 'sede') {
+            if (!filtroCohorte.value || !selectSede.value || !fechaInicio.value || !fechaFinal.value) {
+                alert("Asegurate que todos los campos esten llenos");
+                return;
+            }
+            else {
+                coho = filtroCohorte.value;
+                sed = selectSede.value;
+                iden = '';
+            }
+        }
+        else {
+            if (selectElement.value == 'usuarios') {
+                if (!inputIdentificacion.value) {
+                    alert("Asegurate que todos los campos esten llenos");
+                    return;
+                }
+                else {
+                    coho = '';
+                    sed = '';
+                    iden = inputIdentificacion.value;
+                    inicio = "";
+                    Fin = "";
+                    inicio = new Date('01/01/2001');
+                    Fin = new Date('01/01/2001');
+                }
+            }
+        }
+
+        let fIni = fechaInicio.value;
+        let fFin = fechaFinal.value;
+
+
+        //codigo que dibuja la tabla
+        axios.post('/filtro', {
+            coho: coho,
+            sed: sed,
+            fIni: fIni,
+            fFin: fFin,
+            iden: iden
+        })
+            .then(function (response) {
+                // Agrupar los documentos según el cohorte
+                tabla.innerHTML = "";
+                cohortes = response.data.docs.reduce((acc, doc) => {
+                    const cohorte = doc.hCodigo;
+                    if (!acc[cohorte]) {
+                        acc[cohorte] = [];
+                    }
+                    acc[cohorte].push(doc);
+                    return acc;
+                }, {});
+                let tam = Object.keys(cohortes).length;
+                if (tam == 0) {
+                    imprimirExcel.style.display = 'none';
+                    alert("No se encontraron registros");
+                }
+                // Recorrer cada cohorte y crear una tabla para él
+                loading.style.display = 'none';
+                Object.entries(cohortes).forEach(([cohorte, docs]) => {
+                    const table = document.createElement("table");
+                    table.classList.add("table", "table-striped", "mb-0");
+                    const thead = document.createElement("thead");
+                    const headerRow = document.createElement("tr");
+
+
+                    const fields = Object.keys(docs[0]);
+                    fields.forEach(field => {
+                        let headerCell = document.createElement("th");
+                        headerCell.style.fontSize = "10px";
+
+                        field = field.replace(/_/g, ' ');
+                        field = field.charAt(0).toUpperCase() + field.slice(1);
+                        headerCell.innerText = field;
+                        headerRow.appendChild(headerCell);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+                    //table.appendChild(headerRow);
+
+                    const tbody = document.createElement("tbody");
+                    docs.forEach(function (doc) {
+
+                        // Crea una nueva fila en la tabla
+
+                        let row = document.createElement("tr");
+                        // Recorre todas las propiedades del documento (nombre, id, apellido, etc.)
+                        for (let prop in doc) {
+                            // Crea una nueva celda en la fila
+                            let cell = document.createElement("td");
+                            // Verifica si la propiedad es de tipo fecha
+                            if (doc[prop] == null) {
+                                cell.innerHTML = "";
+                            }
+                            else {
+                                if (doc[prop] == "") {
+                                    cell.innerHTML = "";
+                                }
+                                else {
+                                    if (doc[prop].toString().includes("-")) {
+                                        datefec = new Date(doc[prop]); //se guarda la fecha en una variable
+                                        if (isValidDate(datefec)) {
+                                            let dia = datefec.getDate().toString().padStart(2, '0');
+                                            let mes = (datefec.getMonth() + 1).toString().padStart(2, '0');
+                                            let anio = datefec.getFullYear();
+                                            let formattedDate = dia + "/" + mes + "/" + anio;
+                                            cell.innerHTML = formattedDate;
+                                        }
+                                        else {
+                                            cell.innerHTML = doc[prop];
+                                        }
+                                    }
+                                    else {
+                                        cell.innerHTML = doc[prop];
+                                    }
+                                }
+                            }
+                            function isValidDate(dateString) {
+                                let date = dateString;
+                                return !isNaN(date.getTime());
+                            }
+                            row.appendChild(cell);
+                        }
+                        tbody.appendChild(row)
+                    });
+                    table.appendChild(tbody);
+                    //crea las tablas
+                    const parentDiv = document.querySelector("#tablas");
+                    const newDiv = document.createElement("div");
+                    newDiv.classList.add("cohorte-div");
+                    newDiv.classList.add("card");
+                    newDiv.classList.add("card-body");
+                    newDiv.classList.add("border");
+                    newDiv.classList.add("border-primary");
+                    newDiv.style.marginTop = "3rem"
+                    const tableTitle = document.createElement("h2");
+                    tableTitle.innerText = `Cohorte: ${docs[0].hCohorte}`;
+                    tableTitle.style.fontSize = "1.3rem";
+                    newDiv.appendChild(tableTitle);
+
+                    parentDiv.appendChild(newDiv);
+                    //parentDiv.appendChild(table);
+                    const tableWrapper = document.createElement("div");
+                    tableWrapper.classList.add("table-responsive")
+                    tableWrapper.style.maxHeight = "300px";
+                    tableWrapper.style.overflowY = "auto";
+                    tableWrapper.classList.add("cohorte-table");
+                    tableWrapper.appendChild(table);
+                    newDiv.appendChild(tableWrapper);
+                    document.querySelector("#tablas").appendChild(newDiv);
+                    imprimirExcel.style.display = 'block';
+                });
+
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+        tabla.style.display = 'block';
+    });
+
+
+    //para descargar tabla en excel con javascript
+
+    imprimirExcel.addEventListener("click", () => {
+
+
+
+        var workbook = XLSX.utils.book_new();
+        let i = 0;
+        let sheetName;
+        Object.entries(cohortes).forEach(([cohorte, docs]) => {
+            // Crear una nueva hoja en el libro
+            const worksheetName = `Cohorte ${cohorte}`;
+            i++
+            sheetName = "hoja " + i;
+            const worksheet = XLSX.utils.json_to_sheet(docs);
+
+            // Recorrer todas las celdas de la hoja
+            const range = XLSX.utils.decode_range(worksheet["!ref"]);
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    // Obtener el valor de la celda
+                    const cell_address = { c: C, r: R };
+                    const cell_ref = XLSX.utils.encode_cell(cell_address);
+                    const cell = worksheet[cell_ref];
+                    if (!cell) continue;
+                    let value = cell.v;
+                    let fec = new Date(value)
+
+                    // Verificar si el valor es una fecha válida
+                    if (fec instanceof Date && !isNaN(fec.getTime()) && cell.t == "s") {
+                        // Cambiar el formato de la fecha
+                        //const date = XLSX.SSF.parse_date_code(value, cell.z);
+                        let dia = fec.getDate().toString().padStart(2, '0');
+                        let mes = (fec.getMonth() + 1).toString().padStart(2, '0');
+                        let anio = fec.getFullYear();
+                        let formattedDate = dia + "/" + mes + "/" + anio;
+                        value = formattedDate;
+                    }
+
+                    // Asignar el nuevo valor a la celda
+                    worksheet[cell_ref] = Object.assign({}, cell, { v: value });
+                }
+            }
+
+            // Agregar la hoja al libro
+            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+        });
+
+        // Escribir el archivo
+        let nomc = new Date().toLocaleString();
+        nomcom = nomc + "xlsx"
+        XLSX.writeFile(workbook, nomcom);
+
+
+
+    });
+
+
+</script>

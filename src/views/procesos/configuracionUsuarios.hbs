@@ -1,0 +1,92 @@
+<div class="row">
+    <div class="col-sm-6">
+
+        <form action="/configuracionUsuarios" method="post">
+            <div class="hstack gap-3">
+                <input class="form-control me-auto" type="text" required="true" name='id'
+                    placeholder="Ingrese la identificacion del usuario">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row" style="margin-top:16px">
+    <div class="col-md-6">
+        <div class="row">
+            <form action="/configuracionUsuario" method="post">
+
+                {{#each resultado_api_1}}
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <input type="hidden" name="identificacion" value="{{Identificacion}}">
+                            <input type="hidden" name="nombre" value="{{NombreCompleto}}">
+
+                            <p> Nombre Completo: <label id="usuario">{{NombreCompleto}}</label></p>
+                            <p> Identificación: <label id="Identificacion">{{Identificacion}}</label></p>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <label class="form-label">Asignación de roles</label>
+                            <select class="form-select" name="listarol" required="true">
+                                <option selected="" value="">- Seleccione un rol - </option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Medico">Medico</option>
+                                <option value="Auxiliar Enfermeria">Auxiliar Enfermeria</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="text-aling: right">
+                    <button type="submit" class="btn btn-outline-info">Asignar Rol</button>
+                    <a href="/configuracionUsuarios" class="btn btn-outline-warning">Cancelar</a>
+                </div>
+                 
+ 
+                {{/each}}
+
+               
+            
+             
+
+            </form>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th>Identificacion</th>
+                                <th>Nombre</th>
+                                <th>Rol</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each query_rol}}
+                            <tr>
+                                <td>{{identificacion}}</td>
+                                <td>{{Nombre}}</td>
+                                <td>{{rol}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

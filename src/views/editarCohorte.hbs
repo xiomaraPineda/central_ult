@@ -1,0 +1,69 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Editar Cohorte </h4>
+            </div>
+            <div class="card-body">
+                <form action="/editarCohorte" method="post">
+                    {{!-- llamado datos a la vista con el value se asignan en el campo, el readonly permite que el campo
+                    solo sea lectura--}}
+                    {{#each query_cohorte}}
+                    {{!-- codigo --}}
+                    <div class="mb-3">
+                        <label for="codigo" class="form-label" style="display:none">Código De La
+                            Cohorte:</label>
+
+                        <input class="form-control" type="int" name="codigo" title="Codigo De La Cohorte "
+                            style="display:none" id="codigo" value="{{codigo}}" readonly required>
+
+                    </div>
+                    {{!-- nombre de la cohorte --}}
+                    <div class="mb-3">
+                        <label for="Nombre" class="form-label">Nombre De La Cohorte:</label>
+                        <input class="form-control" type="text" name="Nombre" title="Ingresa el nombre De La Cohorte"
+                            id="Nombre" value="{{Nombre}}" required>
+
+                    </div>
+                    {{!-- criterios --}}
+                    <div class="mb-3 ">
+                        <label for="crterios_cohorte" class="form-label">Criterios De La Cohorte:</label>
+
+                        <input class="form-control" type="text" name="crterios_cohorte"
+                            title="Ingresa los criterios De La Cohorte" id="crterios_cohorte"
+                            value="{{crterios_cohorte}}" required>
+
+                        <h1></h1>
+                    </div>
+                    {{!-- estado --}}
+                    {{!-- <div class="mb-3 row">
+                        <label for="Nombre" class="col-md-2 col-form-label">Estado De La Cohorte:</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" name="estado"
+                                title="Ingresa el estado De La Cohorte" id="estado" value="{{estado}}" required>
+                        </div>
+                    </div> --}}
+                    {{!-- estado --}}
+                    <div class="mb-3">
+                        <label for="estado" class="form-label" _msttexthash="76037" _msthash="295"> Estado
+                            Cohorte</label>
+                        <select id="estado" class="form-select" name="estado" id="estado" value="{{estado}}">
+                            <option selected> Activo </option>
+                            <option> Inactivo </option>
+                        </select>
+                    </div>
+
+                    {{!-- botón guardar --}}
+                    <div style="text-align: right;" ;>
+
+                        <button type=" submit" class="btn btn-primary w-md"> Guardar </button>
+                        <a class="btn btn-warning" href="/confiCohorte"> Cancelar </a>
+                    </div>
+
+                    {{break}}
+                    {{/each}}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

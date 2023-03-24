@@ -1,0 +1,130 @@
+          try {
+
+        //obtener codigo para incrementarlo en cada consulta insert 
+        const pool = await conex.getConnection();
+        const result2 = await pool.request().query('SELECT TOP 1 * FROM controlRiesgo ORDER BY codigoControl DESC');
+        insertar = result2.recordset[0];
+        let codigoControl = insertar.codigoControl;
+
+
+        // Ver si el usuario existe en la base de datos
+        const result = await pool.request().query(`select * from controlRiesgo where idUsuario = ${idUsuario} ORDER BY codigoControl ASC`);
+        const usExistx = result.recordset
+
+
+        if (usExistx.length == 0) {
+            let estado = 'abierto'
+            //obtener fecha control
+            let fechaControl = new Date().toDateString();
+            //incrementa el codigo del dato que se esta insertando 
+            codigoControl = codigoControl + 1;
+            await pool.request()
+                .input('codigoControl', sql.Int, codigoControl)
+                .input('idUsuario', sql.VarChar, idUsuario)
+                .input('cohorte', sql.BigInt, cohorte)
+                .input('estado', sql.VarChar, estado)
+                .input('fechaControl', sql.Date, fechaControl)
+                .query('INSERT INTO controlRiesgo (codigoControl, idUsuario, cohorte, estado, fechaControl ) VALUES (@codigoControl,@idUsuario, @cohorte,@estado,@fechaControl)');
+            console.log('Se insertó un nuevo usuario 1.');
+        }
+
+        usExistx.forEach(async function (usExist) {
+            //valida si el usuario tiene el estado cerrado y hace parte de una cohorte incremental
+            // La consulta devulve resultado pero es estado es cerrado
+            if (usExist && usExist.estado == 'cerrado' && usExist.cohorte == cohorte &&
+                (usExist.cohorte == "152202315329998" || usExist.cohorte == "152202315621636" ||
+                    usExist.cohorte == "152202320250885" || usExist.cohorte == "152202320410987" ||
+                    usExist.cohorte == "152202320102178" || usExist.cohorte == "152202314414483")) {
+                console.log("el control de esta cohorte fue cerrado anteriormente, ingrese el usuario en la cohorte que le corresponde")
+
+            }
+            //valida si el usuario tiene el estado abierto y hace parte de una cohorte incremental
+            //La consulta devuelve resultados, pero el estado es abierto
+            if (usExist && usExist.estado == 'abierto' && usExist.cohorte == cohorte &&
+                (usExist.cohorte == "152202315329998" || usExist.cohorte == "152202315621636" ||
+                    usExist.cohorte == "152202320250885" || usExist.cohorte == "152202320410987" ||
+                    usExist.cohorte == "152202320102178" || usExist.cohorte == "152202314414483")) {
+                console.log("no se puede ingresar un dato que existe")
+
+            }
+            //si el usuario esta en una cohorte incremental y va a pasar a otra entonces se debe cerrar de manera automatica el estado del control
+            //La consulta devuelve resultados, pero el estado es indiferente
+            if (usExist && usExist.estado == 'abierto' && usExist.cohorte != cohorte && (usExist.cohorte == "152202315329998" || usExist.cohorte == "152202315621636" ||
+                usExist.cohorte == "152202320250885" || usExist.cohorte == "152202320410987" ||
+                usExist.cohorte == "152202320102178" || usExist.cohorte == "152202314414483")) {
+
+                let estado = 'abierto'
+                let estadono = 'cerrado'
+                await pool.request()
+                    .input('codigoControl', sql.Int, usExist.codigoControl)
+                    .input('estadono', sql.VarChar, estadono)
+                    .query(`UPDATE controlRiesgo SET estado = @estadono where codigoControl=@codigoControl `)
+                console.log('se actualizo el campo')
+
+                //obtener fecha control
+                let fechaControl = new Date().toDateString();
+                //incrementa el codigo del dato que se esta insertando 
+                codigoControl = codigoControl + 1;
+                await pool.request()
+                    .input('codigoControl', sql.Int, codigoControl)
+                    .input('idUsuario', sql.VarChar, idUsuario)
+                    .input('cohorte', sql.BigInt, cohorte)
+                    .input('estado', sql.VarChar, estado)
+                    .input('fechaControl', sql.Date, fechaControl)
+                    .query('INSERT INTO controlRiesgo (codigoControl, idUsuario, cohorte, estado, fechaControl ) VALUES (@codigoControl,@idUsuario, @cohorte,@estado,@fechaControl)');
+                console.log('Se insertó un nuevo usuario 2');
+
+            }
+            //si el usuario ya existe en el control con esa cohorte
+            if (usExist && usExist.cohorte == cohorte) {
+                console.log('el usuario ya se encunetra en el control.')
+            }
+
+            //La consulta devuelve resultados, pero el estado es indiferente
+            if (usExist && usExist.cohorte != cohorte && cohorte != "152202315329998" && cohorte != "152202315621636" &&
+                cohorte != "152202320250885" && cohorte != "152202320410987" &&
+                cohorte != "152202320102178" && cohorte != "152202314414483") {
+                let estado = 'abierto'
+                //obtener fecha control
+                let fechaControl = new Date().toDateString();
+                //incrementa el codigo del dato que se esta insertando 
+                codigoControl = codigoControl + 1;
+                await pool.request()
+                    .input('codigoControl', sql.Int, codigoControl)
+                    .input('idUsuario', sql.VarChar, idUsuario)
+                    .input('cohorte', sql.BigInt, cohorte)
+                    .input('estado', sql.VarChar, estado)
+                    .input('fechaControl', sql.Date, fechaControl)
+                    .query('INSERT INTO controlRiesgo (codigoControl, idUsuario, cohorte, estado, fechaControl ) VALUES (@codigoControl,@idUsuario, @cohorte,@estado,@fechaControl)');
+                console.log('Se insertó un nuevo usuario 3.');
+            }
+            if (usExist && usExist.estado == 'cerrado' && usExist.cohorte != "152202315329998" && usExist.cohorte != "152202315621636" &&
+                usExist.cohorte != "152202320250885" && usExist.cohorte != "152202320410987" &&
+                usExist.cohorte != "152202320102178" && usExist.cohorte != "152202314414483") {
+                let estado = 'abierto'
+                //obtener fecha control
+                let fechaControl = new Date().toDateString();
+                //incrementa el codigo del dato que se esta insertando 
+                codigoControl = codigoControl + 1;
+                await pool.request()
+                    .input('codigoControl', sql.Int, codigoControl)
+                    .input('idUsuario', sql.VarChar, idUsuario)
+                    .input('cohorte', sql.BigInt, cohorte)
+                    .input('estado', sql.VarChar, estado)
+                    .input('fechaControl', sql.Date, fechaControl)
+                    .query('INSERT INTO controlRiesgo (codigoControl, idUsuario, cohorte, estado, fechaControl ) VALUES (@codigoControl,@idUsuario, @cohorte,@estado,@fechaControl)');
+                console.log('Se insertó un nuevo usuario 3.');
+            }
+            if (usExist && usExist.estado == 'abierto' && usExist.cohorte != "152202315329998" && usExist.cohorte != "152202315621636" &&
+                usExist.cohorte != "152202320250885" && usExist.cohorte != "152202320410987" &&
+                usExist.cohorte != "152202320102178" && usExist.cohorte != "152202314414483") {
+
+                codigoControl = usExist.codigoControl;
+            }
+        })
+
+        return (codigoControl);
+
+    } catch (error) {
+        console.log(error)
+    }

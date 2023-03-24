@@ -1,0 +1,307 @@
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card card-body ">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Cohortes</h3>
+                                <p>En esta sección registre las cohortes</p>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/confiCohorte">
+                                    {{!-- <label for="codigo" class="form-label"> Codigo Cohorte</label>
+                                    <input class="form-control" type="num" placeholder="ingrese codigo cohorte"
+                                        id="codigo" name="codigo" required> </input> --}}
+                                    {{!-- nombre de la cohorte --}}
+                                    <label for="Nombre" class="form-label"> Nombre Cohorte</label>
+                                    <input class="form-control" type="text" placeholder="ingrese nombre cohorte"
+                                        id="Nombre" name="Nombre" required> </input>
+                                    {{!-- criterios de la cohorte --}}
+                                    <label for="crterios_cohorte" class="form-labe"> Criterio Cohorte</label>
+                                    <input class="form-control" type="text" placeholder="ingrese criterios cohorte"
+                                        id="crterios_cohorte" name="crterios_cohorte" required> </input>
+                                    {{!-- estado de la cohorte --}}
+                                    <label for="estado" class="form-label" _msttexthash="76037" _msthash="295"> Estado
+                                        Cohorte</label>
+                                    <select id="estado" class="form-select" name="estado">
+                                        <option selected> Activo </option>
+                                        <option> Inactivo </option>
+                                    </select>
+                                    {{!-- visibilidad de la cohorte --}}
+                                    <input type="text" style="display:none" name="Visible" value="si" />
+
+                                    <div style="text-align:right; margin-top:10px">
+
+                                        <button type="submit" class="btn btn-primary w-md"> Guardar </button>
+                                        <a href="/confiCohorte" class="btn btn-warning"> Cancelar </a>
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">Lista Cohortes</div>
+                                <div class="card-body">
+                                    <div class="table-responsive" style="max-height: 400px; overflow-y:auto">
+                                        <table class="table table-bordered mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="display:none">Id</th>
+                                                    <th>Nombre</th>
+                                                    <th>criterios cohorte</th>
+                                                    <th>estado</th>
+                                                    <th colspan="2">Editar/Eliminar</th>
+                                                    <th style="display:none">visible</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each query_cohorte}}
+
+                                                <tr>
+                                                    <td style="display:none">{{id}}</td>
+                                                    <td>{{Nombre}}</td>
+                                                    <td>{{crterios_cohorte}}</td>
+                                                    <td>{{estado}}</td>
+                                                    <td style="display:none">{{visible}}</td>
+
+                                                    <td> <a title="editar" class="bx bx-pencil"
+                                                            href="/editarCohorte/{{codigo}}">
+                                                        </a><i>
+                                                    </td></i>
+                                                    <td> <a title="Eliminar" class="bx bx-trash-alt"
+                                                            href="/confiCohorte/{{codigo}}"></a> </td>
+                                                </tr>
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+    {{!-- segunda sección --}}
+    <div class="col-sm-6">
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-12">
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h4> Campos de la cohorte </h4>
+                                <p>En esta sección registre los campos de las cohortes</p>
+                                <a class=""> </a>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/cohortecampo">
+                                    {{!-- nombre de la cohorte --}}
+                                    <label for="cohorte" class="form-label"> Nombre Cohorte</label>
+                                    <select class="form-select" type="text" id="cohorte" name="cohorte" required>
+                                        <option value="0">-- seleccione una opción --</option>
+                                        {{#each query_cohorte}}
+                                        <option value="{{codigo}}">{{Nombre}}</option>
+                                        {{/each}}
+                                    </select>
+                                    {{!-- campo --}}
+                                    <label for="campo" class="form-labe"> Campo de la cohorte </label>
+                                    <input class="form-control" type="text" placeholder="ingrese campos cohorte"
+                                        id="campo" name="campo" required> </input>
+                                    {{!-- tipo de dato --}}
+                                    <label for="tipodato" class="form-labe">Tipo de dato </label>
+                                    <select class="form-select" type="text" placeholder="ingrese el tipo de dato"
+                                        id="tipodato" name="tipodato" required>
+                                        <option>-- seleccione una opción --</option>
+                                        <option>texto</option>
+                                        <option>Numerico</option>
+                                        <option>fecha</option>
+                                    </select>
+                                    {{!-- tipo campo --}}
+                                    <label for="tipo" class="form-labe">Tipo de campo </label>
+                                    <select class="form-select" type="text" placeholder="ingrese el tipo de campo"
+                                        id="tipo" name="tipo" required>
+                                        <option>-- seleccione una opción --</option>
+                                        <option value="texto">cuadro de texto</option>
+                                        <option value="lista">lista</option>
+                                    </select>
+                                    {{!-- validar que el valor predeterminado lo separen por coma --}}
+                                    <script>
+
+                                        document.getElementById('tipo').addEventListener("change", function () {
+                                            var seleccionado = document.getElementById('valor');
+                                            if (this.value == 'lista')
+                                                seleccionado.style.display = 'block';
+                                            /*  if (valor == '')
+                                                  alert("Por favor, ingrese un valor predefinido para la lista.");
+                                              event.preventDefault();
+                                              //return;
+                                          }*/
+
+                                            else
+                                                seleccionado.style.display = 'none';
+
+                                        });
+                                    </script>
+
+                                    {{!-- valor predefinido--}}
+                                    <div class="mb-3" id="valor" style="display:none">
+                                        <label for="valor" id="valorp" class="form-label">
+                                            valor predefinido</label>
+                                        <input class="form-control" type="text"
+                                            title="ingrese los elementos separados por coma (,)"
+                                            placeholder="ingrese los elementos separados por coma (,)" id="valor1"
+                                            name="valor1">
+                                        </input>
+                                    </div>
+                                    <script>
+                                        const myInput = document.getElementById("valor1");
+                                        const myInputb = document.getElementById("tipo");
+
+                                        myInput.addEventListener("blur", () => {
+                                            if (!myInput.value.includes(",") && myInputb.value == 'lista') {
+                                                let texto = "El valor predefinido es para una lista, agregue los items separandolos por coma (,)";
+                                                alert(texto);
+                                            }
+                                            else {
+
+
+
+                                            }
+                                        });
+                                    </script>
+                                    <div>
+                                        <h1></h1>
+                                        <button type="click" id="guardarC" class="btn btn-primary"> Guardar
+                                        </button>
+                                        <a href="/confiCohorte" class="btn btn-warning"> Cancelar </a>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <div class="card">
+                        <div class="card-header">Lista de los campos de la cohorte que se han ingresado</div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="max-height:400px; overflow-y:auto">
+                                <table class="table table-bordered mb-0" id="tablac">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none">Id</th>
+                                            <th style="display:none">Codigo</th>
+                                            <th>campo cohorte</th>
+                                            <th>Tipo dato</th>
+                                            <th>Tipo campo</th>
+                                            <th>valor predefinido</th>
+                                            <th>Estado</th>
+                                            <th colspan="2">Editar/Eliminar</th>
+                                            <th style="display:none">Idenficación</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-body">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{{!-- impresion del fomrulario seccion dos --}}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+<script>
+    document.getElementById('cohorte').addEventListener("change", function () {
+        let coho = document.getElementById('cohorte').value;
+        axios.get(`/cohortecampo/?coho=${coho}`)
+            .then(response => {
+                const tableBody = document.querySelector("#table-body");
+                tableBody.innerHTML = ""; // Limpiar los datos de la tabla 
+
+                response.data.query_cohorte1.forEach(function (data) {
+                    const row = document.createElement("tr");
+                    const campo = document.createElement("td");//campo 
+                    campo.innerHTML = data.campo;
+                    const tipoDato = document.createElement("td"); //tipo dato
+                    tipoDato.innerHTML = data.tipodato;
+                    const Tipo = document.createElement("td"); //tipo 
+                    Tipo.innerHTML = data.tipo;
+                    const Valor = document.createElement("td"); //valor
+                    Valor.innerHTML = data.valor;
+                    const Estado = document.createElement("td"); //estado
+                    Estado.innerHTML = data.estado;
+                    const idUsu = document.createElement("td"); //id usuario 
+
+
+
+                    const editar = document.createElement("a")  //boton editar
+                    editar.href = "/editarCampos/" + data.codigo;
+                    editar.innerHTML = "";
+                    editar.className = "bx bx-pencil"
+                    const colEditar = document.createElement("td"); 
+                    colEditar.appendChild(editar);
+
+                    const eliminar = document.createElement("a") //boton eliminar
+                    //eliminar.href = "/cohortecampo/" + data.codigo;
+                    //eliminar.href = "/confiCohorte/" + data.codigo;
+                    eliminar.href = "/cohortecampo/" + data.codigo;
+                    eliminar.innerHTML = "";
+                    eliminar.className = "bx bx-trash-alt"
+                    const colEliminar = document.createElement("td");  
+                    colEliminar.appendChild(eliminar);
+
+                    row.appendChild(campo);
+                    row.appendChild(tipoDato);
+                    row.appendChild(Tipo);
+                    row.appendChild(Valor);
+                    row.appendChild(Estado);
+                    row.appendChild(colEditar);
+                    row.appendChild(colEliminar);
+
+                    tableBody.appendChild(row);
+
+                })
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
+    });
+</script>

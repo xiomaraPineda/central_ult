@@ -1,0 +1,154 @@
+{{!< layout}} <!DOCTYPE html>
+
+    <html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            Acceso | Gestión del Riesgo Prosalco IPS
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" <!-- App favicon -->
+        <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+
+        <!-- Bootstrap Css -->
+        <link id="bootstrap_style" href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <!-- Icons Css -->
+        <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <!-- App Css-->
+        <link id="app_style" href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!-- alertifyjs Css -->
+        <link href="/assets/libs/alertifyjs/build/css/alertify.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- alertifyjs default themes  Css -->
+        <link href="/assets/libs/alertifyjs/build/css/themes/default.min.css" rel="stylesheet" type="text/css" />
+
+        <script>
+            function Alertas(tipo, mensaje) {
+                if (tipo == 'e') {
+                    alertify.error(mensaje);
+                }
+
+                if (tipo == 'w') {
+                    alertify.success(mensaje);
+                }
+            }
+
+        </script>
+    </head>
+
+    <body  data-layout-mode="dark" data-topbar="dark" data-sidebar="dark">
+
+
+        <div class="authentication-bg min-vh-100" >
+            <div class="bg-overlay bg-light"></div>
+            <div class="container">
+                <div class="d-flex flex-column min-vh-100 px-3 pt-4">
+                    <div class="row justify-content-center my-auto">
+                        <div class="col-md-8 col-lg-6 col-xl-5">
+
+                            <div class="mb-4 pb-2">
+                                <a href="/" class="d-block auth-logo">
+                                    <img src="/assets/images/Logo-Prosalco-8.png.webp" alt="" height="60"
+                                        class="auth-logo-dark me-start" />
+                                    <img src="/assets/images/Logo-Prosalco-8.png.webp" alt="" height="90"
+                                        class="auth-logo-light me-start" />
+                                </a>
+                            </div>
+                            <div class="card">
+                                <div class="card-body p-4">
+                                    <div class="text-center mt-2">
+                                        <h5>Bienvenido</h5>
+
+                                        {{#each error_}}
+                                        <label class="btn btn-outline-danger font-size-18" style="text-alaing: center;">
+
+                                            {{this.error1}}
+                                        </label>
+                                        {{/each}}
+
+
+                                        <p class="text-muted">Iniciar sesión para continuar a Prosalco IPS.</p>
+                                    </div>
+                                    <form action="/" method="post">
+                                        <div class="p-2 mt-4">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="username">Numero de
+                                                    Identificación</label>
+                                                <div class="position-relative input-custom-icon">
+                                                    <input name="username" id="txtUsuario" type="text" required="true"
+                                                        class="form-control"
+                                                        placeholder="Ingrese Numero de Identificacion" />
+                                                    <span class="mdi mdi-card-account-details-outline"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <div class="float-end">
+                                                    <a href="http://10.91.20.27/Acceso/RecuperarC.aspx"
+                                                        class="text-muted text-decoration-underline">Olvidó su
+                                                        Contraseña?</a>
+                                                </div>
+                                                <label class="form-label" for="password-input">Contraseña</label>
+                                                <div class="position-relative auth-pass-inputgroup input-custom-icon">
+                                                    <span class="bx bx-lock-alt"></span>
+                                                    <input name="password" id="password" type="password" required="true"
+                                                        class="form-control" placeholder="Ingrese Contraseña" />
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-check py-1">
+
+
+
+                                                <input type="submit"
+                                                    class="btn btn-primary w-100 waves-effect waves-light" href=""
+                                                    value="Iniciar Sesión" />
+
+                                                <div class="mt-4 text-center">
+                                                    <p class="mb-0">No tienes una cuenta ? <a
+                                                            href="http://10.91.20.27/Acceso/Default.aspx"
+                                                            class="fw-medium text-primary"> Solicitala</a> </p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div><!-- end col -->
+                </div><!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="text-center p-4">
+                            <p>©
+                                <script>document.write(new Date().getFullYear())</script> <a
+                                    href="https://prosalcoips.com" target="_blank">ProsalcoIPS</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- end container -->
+        </div>
+        <!-- end authentication section -->
+
+        <!-- JAVASCRIPT -->
+        <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="/assets/libs/metismenujs/metismenujs.min.js"></script>
+        <script src="/assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="/assets/libs/eva-icons/eva.min.js"></script>
+        <script src="/assets/libs/alertifyjs/build/alertify.min.js"></script>
+
+
+        </form>
+    </body>
+
+    </html>

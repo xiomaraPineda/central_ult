@@ -1,0 +1,984 @@
+<div class="row">
+
+
+    <div class="col-md-6">
+
+        <form action="/gestionCohorte" method="post">
+            <div class="hstack gap-3">
+                <input class="form-control me-auto" type="text" required="true" name='id' placeholder="Identficación">
+                <button id="btn-iden" type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    {{!--listas de las cohortes --}}
+
+</div>
+
+<div class="row">
+    <h1></h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {{!-- validar estado de afiliado --}}
+                        {{#if afiliados.length}}
+                        {{#each afiliados}}
+                        <input type="hidden" value={{Estado}} id="txtEstadoAfiliado">
+                        {{/each}}
+                        {{else}}
+
+                        {{/if}}
+
+                        {{#if resultado_api_2.length}}
+                        {{#each resultado_api_2}}
+                        <p>Identificacion: <label style="font-weigth:bold"
+                                id="identificacion">{{Identificacion}}</label></p>
+                        <p>Usuario: <label id="usuario">{{Nombre1}} {{Nombre2}} {{Apellido1}} {{Apellido2}}</label></p>
+                        <p> Sexo: <label id="sexo">{{Sexo}}</label>&nbsp;&nbsp;&nbsp; Fecha de nacimiento: <label
+                                id="fechanacimiento">{{FechaNacimiento}}</label></p>
+
+                        <script>
+                            window.addEventListener("load", function () {
+                                var fe = document.getElementById('fechanacimiento');
+                                var fecha = fe.innerHTML;
+                                fecha = fecha.split('-')[2].split('T')[0] + "/" + fecha.split('-')[1] + "/" + fecha.split('-')[0]
+                                fe.innerHTML = fecha;
+                                fe.innerText = fecha;
+                                fe.value = fecha;
+                                fe.text = fecha;
+
+                                //valida estado de afiliado y muestra una alerta con ok y concelar 
+                                //en caso de que el estado sea no afiliado, muestra una alerta, y al usu dar a alguna de las opciones la pag se recarga 
+                                try {
+                                    var afi = document.getElementById('txtEstadoAfiliado');
+                                    if (afi.value != 'afiliado') { }
+                                }
+                                catch {
+                                    if (confirm('El usuario no se encuentra afiliado en la base de datos, por favor verifique')) {
+                                        window.location.replace('/gestionCohorte')
+
+                                    } else {
+                                        window.location.replace('/gestionCohorte')
+                                    }
+                                }
+
+                            });
+
+                        </script>
+                        {{/each}}
+                        {{else}}
+
+                        {{/if}}
+
+
+
+                        {{!-- el break no se puede colocar dentro de each --}}
+                        {{#if resultado_api_1.length}}
+                        {{#each resultado_api_1}}
+                        {{#if @first}}
+                        <p>Sede: <label id="Sede">{{Sede}}</label> &nbsp;&nbsp;&nbsp; <label
+                                id="EPS">EPS:{{EPS}}</label></p>
+                        <p></p>
+                        <p></p>
+                        {{break}}
+                        {{/if}}
+                        {{/each}}
+                        {{else}}
+
+                        {{/if}}
+
+                        {{#if resultado_api_1.length}}
+                        <p></p>
+                        {{else}}
+
+                        {{#each resultado_api_2}}
+                        <h5>{{error}}</h5>
+                        <p></p>
+                        <p></p>
+                        {{/each}}
+                        {{/if}}
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+
+                                <select class="form-select" name="lista_cohortes" id="op_se">
+                                    <option selected="">Seleccione una cohorte</option>
+                                    {{#each lista_coho}}
+
+                                    <option name="codOpcion" value="{{codigo}}"> {{Nombre}} </option>
+                                    {{break}}
+                                    {{else}}
+
+                                    <option value="#"></option>
+                                    {{/each}}
+                                </select>
+
+                                <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="table-responsive" style="max-height:800px; padding-top: 5px; padding-right:5px">
+                        <div class="card">
+                            <input type="button" value="Cerrar control" class="btn btn-outline-danger"
+                                id="cerrar_gestion" style="display: none;">
+                            <label style="margin:0 auto; margin-top:10px">Gestión General del usuario</label>
+                            <div id="GestionC" class="card-body">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="col-md-6"> {{!-- toda trajeta derecha --}}
+
+
+        <div class="card card-body">
+
+            <ul class="nav nav-pills nav-justified" role="tablist">
+
+
+                <li class="nav-item waves-effect waves-light">
+                    <a class="nav-link" data-bs-toggle="tab" href="#atenciones" role="tab" aria-selected="false">
+                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                        <span class="d-none d-sm-block">Atenciones ( {{{resultado_api_1.length}}} )</span>
+                    </a>
+                </li>
+
+                <li class="nav-item waves-effect waves-light">
+                    <a class="nav-link" data-bs-toggle="tab" href="#cohortes" role="tab" aria-selected="false">
+                        <span class="d-block d-sm-none"><i class="far
+                                fa-envelope"></i></span>
+                        <span class="d-none d-sm-block">Gestión de las cohortes ( {{{datos.length}}} )</span>
+                    </a>
+                </li>
+
+            </ul>
+
+
+            <div class="tab-content p-3 text-muted">
+                <div class="tab-pane active table-responsive" id="atenciones" role="tabpanel">
+                    <ul>
+                        {{#each resultado_api_1}}
+
+                        {{#if @index}}
+
+                        <div class="card" id="{{@index}}" style="display:none">
+                            <div class="card-body">
+                                <div class="row" style="margin-bottom:5px">
+                                    <div class="col-md-12">
+
+                                        <input type="button" class="btn btn-outline-primary"
+                                            onclick="anterior('{{@index}}')" value="Anterior" />
+
+                                        <input type="button" class="btn btn-outline-warning" value="Siguiente"
+                                            onclick="siguiente('{{@index}}')" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Fecha Atencion</label>
+                                            <label class="form-control">{{Fecha}}</label>
+
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label"> Edad </label>
+                                                    <label class="form-control">{{EdadCitaAnios}}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+
+                                                <div class="mb-3">
+                                                    <label class="form-label"> Quinquenio </label>
+                                                    <label class="form-control">{{Quinquenio}}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label"> Ciclo de vida </label>
+                                                <label class="form-control">{{CicloDeVida}}</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tipo de actividad</label>
+                                                <label class="form-control">{{TipoActividad}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Sede</label>
+                                            <label class="form-control">{{Sede}}</label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Afiliacion</label>
+                                            <label class="form-control">{{TipoAfiliado}}</label>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Estado de actividad</label>
+                                            <label class="form-control">{{EstadoActividad}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de la cita</label>
+                                            <label class="form-control">{{TipoCita}}</label>
+
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="col-md-12">
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Cups</label>
+                                            <label class="form-control">{{Cups}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Sura Cups</label>
+                                            <label class="form-control">{{SuraCups}}</label>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dxppal</label>
+                                            <label class="form-control">{{Dxppal}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Tipo Dxppa</label>
+                                            <label class="form-control">{{TipoDxppa}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Grupo diagnostico</label>
+                                            <label class="form-control">{{GrupoDiagnostico}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dx1 </label>
+                                            <label class="form-control">{{Dx1}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dx2 </label>
+                                            <label class="form-control">{{Dx2}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dx3 </label>
+                                            <label class="form-control">{{Dx3}}</label>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+
+
+
+                            </div>
+                        </div>
+                        {{else}}
+                        <div class="card" id="{{@index}}" style="display:block">
+
+                            <div class="card-body">
+
+                                <div class="row" style="margin-bottom:5px">
+                                    <div class="col-md-12">
+                                        <input type="button" class="btn btn-outline-warning" value="Siguiente"
+                                            onclick="siguiente('{{@index}}')" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Fecha Atencion</label>
+                                            <label class="form-control">{{Fecha}}</label>
+
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label"> Edad </label>
+                                                    <label class="form-control">{{EdadCitaAnios}}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+
+                                                <div class="mb-3">
+                                                    <label class="form-label"> Quinquenio </label>
+                                                    <label class="form-control">{{Quinquenio}}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label"> Ciclo de vida </label>
+                                                <label class="form-control">{{CicloDeVida}}</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tipo de actividad</label>
+                                                <label class="form-control">{{TipoActividad}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Sede</label>
+                                            <label class="form-control">{{Sede}}</label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Afiliacion</label>
+                                            <label class="form-control">{{TipoAfiliado}}</label>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Estado de actividad</label>
+                                            <label class="form-control">{{EstadoActividad}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de la cita</label>
+                                            <label class="form-control">{{TipoCita}}</label>
+
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="col-md-12">
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Cups</label>
+                                            <label class="form-control">{{Cups}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Sura Cups</label>
+                                            <label class="form-control">{{SuraCups}}</label>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dxppal</label>
+                                            <label class="form-control">{{Dxppal}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Tipo Dxppa</label>
+                                            <label class="form-control">{{TipoDxppa}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Grupo diagnostico</label>
+                                            <label class="form-control">{{GrupoDiagnostico}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dx1 </label>
+                                            <label class="form-control">{{Dx1}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dx2 </label>
+                                            <label class="form-control">{{Dx2}}</label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Dx3 </label>
+                                            <label class="form-control">{{Dx3}}</label>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        {{/if}}
+
+                        {{/each}}
+                    </ul>
+                </div>
+                <script>
+                    function anterior(id) {
+
+                        var card = document.getElementById(id);
+                        card.style.display = "none";
+
+                        let id_ = parseInt(id);
+                        var cardv = document.getElementById(id_ - 1);
+                        cardv.style.display = "block";
+
+
+                    }
+                    function siguiente(id) {
+                        var card = document.getElementById(id);
+                        card.style.display = "none";
+
+
+                        try {
+
+                            let id_ = parseInt(id);
+                            var cardv = document.getElementById(id_ + 1);
+                            cardv.style.display = "block";
+                        }
+                        catch
+                        {
+                            var card = document.getElementById(id);
+                            card.style.display = "block";
+
+                        }
+
+                    }
+                </script>
+
+                {{!-- -------------------------------------------------------- --}}
+                <div class="tab-pane " id="cohortes" role="tabpanel"
+                    style="max-height: 400px; overflow-y:auto; padding-right:10px">
+                    <ul>
+                        {{#each datos}}
+
+                        {{#if @index}}
+
+                        <div class="card" id="9{{@index}}" style="display:none;">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+
+                                        <input type="button" class="btn btn-outline-primary"
+                                            onclick="anterior('9{{@index}}')" value="Anterior" />
+
+                                        <input type="button" class="btn btn-outline-warning" value="Siguiente"
+                                            onclick="siguiente('9{{@index}}')" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12" style="margin-top:10px">
+                                        <li>
+                                            {{#each this }}
+                                            <div class="mb-3">
+                                                <label class="form-label">{{@key}}:</label>
+                                                <label class="form-control">{{this}}</label>
+                                            </div>
+                                            {{/each}}
+
+                                        </li>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        {{else}}
+                        <div class="card" id="9{{@index}}" style="display:block">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="button" class="btn btn-outline-warning" value="Siguiente"
+                                            onclick="siguiente('9{{@index}}')" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12" style="margin-top:10px">
+                                        {{#each this}}
+
+                                        <div class="mb-3">
+
+                                            <label class="form-label">{{@key}}:</label>
+                                            <label class="form-control">{{this}}</label>
+                                        </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+                        {{/if}}
+
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <input type="text" type="hidden" id="codigoCont" style="display: none;">
+</div>
+</div>
+
+
+<script>
+
+    function BuscarCampo(arreglo, registro) {
+        return registro.split('.').reduce(function (o, x) {
+            return (typeof o == 'undefined' || o === null) ? o : o[x];
+        }, arreglo);
+    }
+
+
+    document.getElementById('op_se').addEventListener("change", function () {
+
+
+        let coho = document.getElementById('op_se').value;
+        axios.get(`/gestionCohorte/info/?coho=${coho}`)
+            .then(response => {
+                let res = response.data.condigoControl;
+
+
+                const FomularioCohorte = document.getElementById("GestionC");
+                FomularioCohorte.innerHTML = "";
+
+
+                const form = document.createElement("form")
+                form.id = "formGestion"
+                form.method = "post"
+                form.action = "/gestionCohorte/gestion"
+
+
+                var inputOculto = document.createElement("input");
+                inputOculto.type = "hidden";
+                inputOculto.name = "husuario";
+                inputOculto.value = document.getElementById("usuario").innerHTML;
+
+
+                var inputOculto1 = document.createElement("input");
+                inputOculto1.type = "hidden";
+                inputOculto1.name = "hsexo";
+                inputOculto1.value = document.getElementById("sexo").innerHTML;
+
+                var inputOculto2 = document.createElement("input");
+                inputOculto2.type = "hidden";
+                inputOculto2.name = "hfechanacimniento";
+                inputOculto2.value = document.getElementById("fechanacimiento").innerHTML;
+
+
+                var inputOculto3 = document.createElement("input");
+                inputOculto3.type = "hidden";
+                inputOculto3.name = "hidentificacion";
+                inputOculto3.value = document.getElementById("identificacion").innerHTML;
+
+
+                var inputOculto4 = document.createElement("input");
+                inputOculto4.type = "hidden";
+                inputOculto4.name = "hSede";
+                inputOculto4.value = document.getElementById("Sede").innerHTML;;
+
+
+                var inputOculto5 = document.createElement("input");
+                inputOculto5.type = "hidden";
+                inputOculto5.name = "hEps";
+                inputOculto5.value = document.getElementById("EPS").innerHTML;;
+
+                var inputOculto6 = document.createElement("input");
+                inputOculto6.type = "hidden";
+                inputOculto6.name = "hCohorte";
+                let selectCohorte = document.getElementById("op_se")
+                inputOculto6.value = selectCohorte.innerHTML;
+
+                var inputOculto6 = document.createElement("input");
+                inputOculto6.type = "hidden";
+                inputOculto6.name = "hCodigo";
+                inputOculto6.value = selectCohorte.value;
+
+
+                const fechaActual = new Date();
+                const options = { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' };
+                const fechaFormateada = fechaActual.toLocaleDateString('es-PE', options);
+                var inputOculto7 = document.createElement("input");
+                inputOculto7.type = "hidden";
+                inputOculto7.name = "hFechaGestion";
+                inputOculto7.value = fechaFormateada.toString();
+
+
+                //var inputOculto8 = document.createElement("input");
+                //inputOculto8.type = "hidden";
+                //let codig = response.data.codigoControl[0].codigoControl;
+                //inputOculto8.name = "codigoControl";
+                //inputOculto8.value = codig;
+
+
+                form.appendChild(inputOculto);
+                form.appendChild(inputOculto1);
+                form.appendChild(inputOculto2);
+                form.appendChild(inputOculto3);
+                form.appendChild(inputOculto4);
+                form.appendChild(inputOculto5);
+                form.appendChild(inputOculto6);
+                form.appendChild(inputOculto7);
+                //form.appendChild(inputOculto8);
+                FomularioCohorte.appendChild(form);
+
+                const j = response.data.campos_cor.length;
+                let nombrediv = 0;
+                let nombrediv_c = 1;
+                let k = 0;
+                var x = 0;
+                var divj = "";
+                var divI = "";
+
+                let pnlGestionC = document.querySelector("#GestionC")
+                let mensaje = response.data.codigoControl[0].mensaje;
+                let noSePuede = response.data.codigoControl[0].noSePuede;
+                let codigoCont = response.data.codigoControl[0].codig;
+                let btncerrar = document.querySelector("#cerrar_gestion");
+
+
+                if (noSePuede == "No se puede insertar en esta cohorte por que ya estuvo en ella") {
+                    divj = document.createElement("div");
+                    let lbltxt = document.createElement("label")
+                    lbltxt.textContent = noSePuede;
+                    divj.appendChild(lbltxt);
+                    pnlGestionC.appendChild(divj)
+                    btncerrar.style.display = 'none';
+
+                }
+                else {
+                    if (mensaje == "btn") {
+                        btncerrar.style.display = 'block';
+                        let inputh = document.querySelector("#codigoCont");
+                        inputh.value = codigoCont;
+                    }
+                    else {
+                        if (mensaje == "nobtn") {
+                            btncerrar.style.display = 'none';
+                        }
+                    }
+
+                    response.data.campos_cor.forEach(function (data) {
+                        k++;
+                        x++;
+                        if (x === 1) {
+
+                            nombrediv++;
+                            divj = document.createElement("div");
+                            divj.className = 'mb-4';
+                            divj.id = "divContenedor_" + nombrediv.toString();
+
+                            if (nombrediv === 1) {
+                                divj.style.display = "block";
+                            } else {
+                                divj.style.display = "none";
+                            }
+                        }
+
+                        var control = "";
+
+                        if (data.tipo == "texto" && data.tipodato == "Numerico") {
+
+                            divI = document.createElement("div");
+                            divI.id = "divn" + k.toString();
+
+                            var labelC = document.createElement("label");
+                            labelC.className = 'form-label'
+                            labelC.innerHTML = data.campo;
+
+                            var inputC = document.createElement("input");
+                            inputC.type = "number";
+
+                            inputC.id = data.campo
+
+                            let campo = BuscarCampo(response.data.dat_ul[0], data.campo)
+                            if (campo) //evaluar si existe o contiene valores
+                            {
+                                if (campo.toString().includes(".") || campo.toString().includes(",")) {
+                                    inputC.step = "0.01"
+                                }
+                                campo = campo.toString().length > 5 ? campo.toString().substring(0, 4) : campo.toString();
+                                campo = campo.toString().replace(",", ".");
+                                inputC.value = campo;
+                            }
+                            else {
+                                inputC.value = campo;
+                            }
+                            inputC.name = data.campo
+                            inputC.className = 'form-control';
+
+                            divI.appendChild(labelC);
+                            divI.appendChild(inputC);
+                        }
+
+                        if (data.tipo == "texto" && data.tipodato == "fecha") {
+                            divI = document.createElement("div");
+                            divI.id = "divn" + k.toString();
+
+
+                            var labelC = document.createElement("label");
+                            labelC.className = 'form-label';
+                            labelC.innerHTML = data.campo;
+
+                            var inputC = document.createElement("input");
+                            inputC.type = "date";
+                            inputC.id = data.campo
+                            inputC.value = BuscarCampo(response.data.dat_ul[0], data.campo)
+                            inputC.name = data.campo
+                            inputC.className = 'form-control';
+
+                            divI.appendChild(labelC);
+                            divI.appendChild(inputC);
+                        }
+
+                        if (data.tipo == "texto" && data.tipodato == "texto") {
+                            divI = document.createElement("div");
+                            divI.id = "divn" + k.toString();
+
+                            var div = document.getElementById("div" + k.toString());
+
+                            var labelC = document.createElement("label");
+                            labelC.className = 'form-label';
+                            labelC.innerHTML = data.campo;
+
+                            var inputC = document.createElement("input");
+                            inputC.type = "text";
+                            inputC.id = data.campo
+                            inputC.value = BuscarCampo(response.data.dat_ul[0], data.campo)
+                            inputC.name = data.campo
+                            inputC.className = 'form-control';
+
+                            divI.appendChild(labelC);
+                            divI.appendChild(inputC);
+                        }
+
+                        if (data.tipo == "lista") {
+
+                            var opciones = data.valor.split(',');
+
+
+                            divI = document.createElement("div");
+                            divI.id = "divn" + k.toString();
+
+                            var div = document.getElementById("div" + k.toString());
+
+                            var labelC = document.createElement("label");
+                            labelC.className = 'form-label';
+                            labelC.innerHTML = data.campo;
+
+                            var inputC = document.createElement("select");
+                            inputC.id = data.campo
+
+                            inputC.name = data.campo
+                            inputC.className = 'form-control';
+                            const opcionx = document.createElement('option');
+                            opcionx.value = "Seleccione una opcion";
+
+                            inputC.appendChild(opcionx)
+                            // let textoopciones = "";
+                            for (let i = 0; i < opciones.length; i++) {
+
+                                const opcion1 = document.createElement('option');
+                                opcion1.value = opciones[i];
+
+                                if (opciones[i] == BuscarCampo(response.data.dat_ul[0], data.campo)) {
+
+                                    opcion1.selected = true;
+                                }
+                                opcion1.textContent = opciones[i];
+                                inputC.appendChild(opcion1)
+                            }
+
+                            divI.appendChild(labelC);
+                            divI.appendChild(inputC);
+                        }
+
+
+                        divj.appendChild(divI)
+                        if (x === 10 || k === j) {
+
+                            var divI = document.createElement("div");
+                            divI.id = "divn" + k.toString();
+
+                            var inputC = document.createElement("input");
+                            inputC.type = "button";
+                            inputC.value = "Siguiente";
+                            inputC.id = "y" + nombrediv.toString();
+                            inputC.style = 'margin-top:20px; float:right'
+                            inputC.className = 'btn btn-outline-warning ';
+
+                            inputC.onclick = function () {
+
+                                var actualDiv = document.getElementById("divContenedor_" + nombrediv_c.toString());
+                                actualDiv.style.display = "none";
+                                nombrediv_c++;
+
+                                var siguienteDiv = document.getElementById("divContenedor_" + nombrediv_c.toString());
+                                siguienteDiv.style.display = "block";
+
+
+                            };
+
+
+                            var innputC_ = document.createElement("input");
+                            innputC_.type = "button";
+                            innputC_.value = "Retroceder";
+                            innputC_.style = 'margin-top:20px'
+                            innputC_.className = 'btn btn-outline-primary ';
+                            if (nombrediv === 1) {
+                                innputC_.style.display = 'none'
+
+                            }
+
+                            innputC_.onclick = function () {
+                                var actualDiv = document.getElementById("divContenedor_" + nombrediv_c.toString());
+                                actualDiv.style.display = "none";
+                                nombrediv_c--;
+                                var anteriorDiv = document.getElementById("divContenedor_" + nombrediv_c.toString());
+                                anteriorDiv.style.display = "block";
+                            };
+
+                            divI.appendChild(innputC_);
+                            divI.appendChild(inputC);
+                            divj.appendChild(divI);
+
+                            form.appendChild(divj);
+
+                            x = 0;
+                        }
+
+
+
+
+                        if (j === k) {
+
+
+                            inputC.style.display = "none";
+
+                            divI = document.createElement("div");
+                            divI.id = "div" + k.toString();
+
+                            var labelC = document.createElement("label");
+                            labelC.classList.add('form-label')
+                            labelC.innerHTML = "";
+
+                            var inputC = document.createElement("input");
+                            inputC.value = "Guardar Gestión"
+                            inputC.style = 'margin-top:10px; float:right'
+                            inputC.className = 'btn btn-outline-info'
+
+                            inputC.type = "submit"
+
+                            divI.appendChild(labelC);
+                            divI.appendChild(inputC);
+
+
+                            divj.appendChild(divI)
+                            form.appendChild(divj)
+                        }
+
+                    }
+
+
+
+                    );
+                }
+            })
+            .catch(error => {
+                alert(error);
+            });
+
+    })
+
+
+
+
+</script>
+
+<script>
+    var miFormulario = document.getElementById('formGestion');
+
+    if (miFormulario) {
+        miFormulario.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+
+
+            var datosFormulario = new FormData(miFormulario);
+            let identificacion = document.getElementById("identificacion");
+            identificacion = identificacion.innerHTML;
+            let Cohorte = document.getElementById("op_se");
+            Cohorte = Cohorte.value;
+
+            datosFormulario.append('Identificacion', identificacion);
+            datosFormulario.append('Cohorte', Cohorte);
+
+            //const url = '/gestionCohorte/gestion';
+
+            const data = new FormData(form); // Crea un objeto FormData con los datos del formulario
+
+            axios.post(url, datosFormulario)
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    }
+</script>
+<script>
+    let btncerrar = document.querySelector("#cerrar_gestion");
+    let codigoC = document.querySelector("#codigoCont");
+
+    btncerrar.addEventListener("click", function () {
+        let control = codigoC.value;
+        axios.post("/cerrarGestion", {
+            control: control
+        })
+            .then(function (response) {
+                const res = response.data.mensaje;
+                alert(res);
+                window.location.replace("/gestionCohorte");
+            })
+            .catch(function (error) {
+                const res = response.data.mensaje;
+                alert(res);
+            });
+
+
+
+    });
+
+
+
+</script>

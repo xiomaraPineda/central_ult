@@ -1,0 +1,33 @@
+{
+  "name": "appcr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "d": "nodemon src/app.js",
+    "start": "node src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.3.2",
+    "body-parser": "^1.20.1",
+    "colors": "^1.4.0",
+    "express": "^4.18.2",
+    "express-handlebars": "^6.0.7",
+    "express-session": "^1.17.3",
+    "fs": "^0.0.1-security",
+    "handlebars-layouts": "^3.1.4",
+    "mongoose": "^6.9.0",
+    "mssql": "^9.1.1",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.0",
+    "node-schedule": "^2.1.1",
+    "nodemon": "^2.0.20",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "schedule": "^0.5.0",
+    "xlsx": "^0.18.5"
+  }
+}

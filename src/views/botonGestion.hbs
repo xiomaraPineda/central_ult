@@ -1,0 +1,86 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-primary" id="imprimierArcGest" onclick="excelG()"> Generar Archivo
+                    Gestion</button>
+            </div>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-primary" id="btnDescargar" disabled="true"
+                    onclick="descargarExcel()"> <i class="bx bx-download"></i> Descargar
+                    archivo
+                    Gestión</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    var miIntervalo = {}
+    let gestiones = {};
+
+    //traer datos 
+    function excelG() {
+
+        axios.get('/gestion')
+            .then(function (response) {
+                //agrupar las claves
+                iniciarIntervalo();
+                alert("Se esta procesando el archivo cuando termine de ser generado se le informará para su descarga.")
+
+            }).catch(function (error) {
+                console.log(error);
+            })
+    }
+
+    function descargarExcel() {
+        axios({
+            url: '/descargarGestiones',
+            method: 'GET',
+            responseType: 'blob'
+        })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'GestionesGenerales.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            });
+    }
+
+
+
+
+    function validarArchivo() {
+        axios.get('/ValidarArchivo')
+            .then((response) => {
+
+                let estado = response.data;
+                if (estado == "Si") {
+                    clearInterval(miIntervalo);
+                    var boton = document.getElementById('btnDescargar')
+                    boton.disabled = false;
+
+                    alert('el archivo ya fue generado puede descargarlo')
+                }
+                // Hacer algo si el archivo existe
+            })
+            .catch((error) => {
+                clearInterval(miIntervalo);
+            });
+    }
+
+    function iniciarIntervalo() {
+        // Iniciar el intervalo y almacenar el ID en la variable miIntervalo
+        miIntervalo = setInterval(validarArchivo, 5000);
+        // Desactivar el botón para evitar que se inicie nuevamente mientras se está ejecutando el intervalo
+
+    }
+
+
+
+</script>

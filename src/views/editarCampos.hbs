@@ -1,0 +1,111 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Editar campos de la Cohorte </h4>
+            </div>
+            <div class="card-body">
+                <form action="/editarCampos" method="post">
+                    {{!-- llamado datos a la vista con el value se asignan en el campo, el readonly permite que el campo
+                    solo sea lectura--}}
+
+                    {{#each query_cohorte1}}
+                    {{!-- codigo --}}
+                    <div class="mb-3">
+                        <label for="codigo" class="form-label" style="display:none">Código Del
+                            campo:</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="int" name="codigo" title="Codigo De La Cohorte "
+                                style="display:none" id="codigo" value="{{codigo}}" readonly required>
+                        </div>
+                    </div>
+                    {{!-- codigo cohorte --}}
+                    <div class="mb-3 row">
+                        <label for="cohorte" class="col-md-2 col-form-label" style="display:none">Código De La
+                            Cohorte:</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="int" name="cohorte" title="Codigo De La Cohorte "
+                                style="display:none" id="cohorte" value="{{cohorte}}" readonly required>
+                        </div>
+                    </div>
+
+                    {{!-- campo --}}
+                    <div class="mb-3">
+                        <label for="campo" class="form-label">Campos de la Cohorte:</label>
+
+                        <input class="form-control" type="text" name="campo" title="Ingresa el campo de la cohorte"
+                            id="campo" value="{{campo}}" required>
+
+                    </div>
+                    <div class="mb-3">
+                        {{!-- tipo dato --}}
+                        <label for="tipodato" class="form-label">Tipo de dato </label>
+                        <select class="form-control" type="text" placeholder="ingrese el tipo de dato" id="tipodato"
+                            name="tipodato" value="{{tipodato}}">
+                            <option>texto</option>
+                            <option>Numerico</option>
+                            <option>fecha</option>
+                        </select>
+                    </div>
+                    {{!-- tipo --}}
+                    <div class="mb-3">
+                        <label for="tipo" class="form-label">Tipo de campo </label>
+                        <select class="form-select" type="text" placeholder="ingrese el tipo de campo" id="tipo"
+                            name="tipo" value="{{tipo}}">
+                            <option value="texto">cuadro de texto</option>
+                            <option value="lista">lista</option>
+                        </select>
+                    </div>
+                    <script>
+
+                        document.getElementById('tipo').addEventListener("change", function () {
+                            var seleccionado = document.getElementById('valor');
+                            if (this.value == 'lista')
+                                seleccionado.style.display = 'block';
+                            /*  if (valor == '')
+                                  alert("Por favor, ingrese un valor predefinido para la lista.");
+                              event.preventDefault();
+                              //return;
+                          }*/
+
+                            else
+                                seleccionado.style.display = 'none';
+
+                        });
+                    </script>
+                    {{!-- valor --}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="valor" class="form-label">Valor predefinido</label>
+                                <input class="form-control" type="text" name="valor" title="Ingrese valor predefinido"
+                                    id="valor" value="{{valor}}">
+                            </div>
+                            {{!-- estado --}}
+                            <label for="estado" class="form-label" _msttexthash="76037" _msthash="295"> Estado
+                                Cohorte</label>
+                            <select id="estado" class="form-select" name="estado" id="estado" value="{{estado}}">
+                                <option selected> Acitvo </option>
+                                <option> Inactivo </option>
+                            </select>
+                            {{!-- id usuario --}}
+                            <div class="mb-3">
+                                <label for="IdUsuario" class="form-label" style="display:none">identificación
+                                    usuario:</label>
+                                <input class="form-control" type="text" name="IdUsuario" title="Ingresa id usuario"
+                                    style="display:none" id="IdUsuario" value="{{IdUsuario}}" required>
+                            </div>
+                            {{!-- botón guardar --}}
+                            <div style="width:100%; text-align:right">
+
+                                <button type=" submit" class="btn btn-primary"> Guardar </button>
+                                <a href="/confiCohorte" class="btn btn-warning"> Cancelar </a>
+                            </div>
+
+                            {{break}}
+                            {{/each}}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
